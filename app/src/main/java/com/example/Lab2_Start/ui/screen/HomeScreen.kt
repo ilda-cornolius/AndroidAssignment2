@@ -23,10 +23,9 @@ import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Home screen displaying the list of tasks.
- * Features responsive layout using WindowSizeClass for large screens and foldable devices.
- */
+
+ //This is a composable ui function for the home screen
+ //Uses the experimental material 3 api 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(

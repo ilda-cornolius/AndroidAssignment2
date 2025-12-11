@@ -7,34 +7,24 @@ import com.example.Lab2_Start.data.repository.TaskRepository
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-/**
- * ViewModel for the Home screen.
- * Manages the list of tasks and handles task-related operations.
- */
+
+ //This the ViewModel class for the Home screen
+ //It manages the list of tasks in the database and handles task-related methods
 class HomeViewModel(
     private val taskRepository: TaskRepository
 ) : ViewModel() {
 
-    /**
-     * StateFlow containing the list of all tasks.
-     * Observes data changes from the repository.
-     */
+    //StateFlow object containing a list of all tasks
     val tasks: StateFlow<List<Task>> = taskRepository.getAllTasks()
 
-    /**
-     * Deletes a task from the repository.
-     * @param taskId The ID of the task to delete
-     */
+    //function used to delete a task from the repository
     fun deleteTask(taskId: String) {
         viewModelScope.launch {
             taskRepository.deleteTask(taskId)
         }
     }
 
-    /**
-     * Toggles the completion status of a task.
-     * @param task The task to toggle
-     */
+    //method used to toggle the completion status of a task
     fun toggleTaskCompletion(task: Task) {
         viewModelScope.launch {
             taskRepository.updateTask(task.copy(isCompleted = !task.isCompleted))

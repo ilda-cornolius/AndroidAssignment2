@@ -24,36 +24,41 @@ import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Screen for creating a new task.
- * Includes input fields for title, description, and due date.
- */
+
+ //This is a composable ui function for the create task screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTaskScreen(
+    //Creates a listener for when the user presses the back button
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreateTaskViewModel = koinViewModel()
 ) {
+    //Variables to store data from the viewModel
     val title by viewModel.title.collectAsState()
     val description by viewModel.description.collectAsState()
     val dueDate by viewModel.dueDate.collectAsState()
     val saveEnabled by viewModel.saveEnabled.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
+    //Variable to store the state of the date picker
     var showDatePicker by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
+            //The topbar ui for the create task screen
             TopAppBar(
                 title = {
+                    //Setting the title text of the topbar
                     Text(
                         text = "Create Task",
                         style = MaterialTheme.typography.headlineMedium
                     )
                 },
+                //This is back button icon in the topbar
                 navigationIcon = {
                     IconButton(
+                        //Sets an onClick listender for the back button
                         onClick = onNavigateBack,
                         modifier = Modifier
                             .semantics {
@@ -81,7 +86,7 @@ fun CreateTaskScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Title input field
+            // This is a input field for the title of the task
             OutlinedTextField(
                 value = title,
                 onValueChange = { viewModel.updateTitle(it) },
@@ -96,7 +101,7 @@ fun CreateTaskScreen(
                 isError = title.isBlank() && title.isNotEmpty()
             )
 
-            // Description input field
+            // This is the dscription text input field
             OutlinedTextField(
                 value = description,
                 onValueChange = { viewModel.updateDescription(it) },
@@ -111,7 +116,7 @@ fun CreateTaskScreen(
                 maxLines = 8
             )
 
-            // Due date picker
+            // This is the due date picker input field 
             val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
             OutlinedTextField(
                 value = if (dueDate != null) {
@@ -145,10 +150,11 @@ fun CreateTaskScreen(
                 }
             )
 
-            // Save button
+            // This is the save button to save the task to the database
             Button(
                 onClick = {
                     coroutineScope.launch {
+                        //contains a onclick listener to save the task to the database
                         viewModel.saveTask()
                         onNavigateBack()
                     }
@@ -170,6 +176,7 @@ fun CreateTaskScreen(
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
+                //setting the text of the save button
                 Text(
                     text = "Save Task",
                     style = MaterialTheme.typography.labelLarge
@@ -179,7 +186,7 @@ fun CreateTaskScreen(
             Spacer(modifier = Modifier.weight(1f))
         }
 
-        // Date picker dialog
+        // Opens the date picker calender dialog box when the user clicks the due date icon
         if (showDatePicker) {
             val datePickerState = rememberDatePickerState(
                 initialSelectedDateMillis = dueDate ?: System.currentTimeMillis()
@@ -198,9 +205,10 @@ fun CreateTaskScreen(
     }
 }
 
-/**
- * Date picker dialog composable.
- */
+
+
+ //This is the jetpack compose function for the date picker dialog box
+ //ExperimentalMatieral3Api is required to use a Card object with onClick functionality
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialog(
@@ -209,6 +217,7 @@ fun DatePickerDialog(
     datePickerState: DatePickerState,
     modifier: Modifier = Modifier
 ) {
+    //Setting up the Alert Dialog box functionality
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = {
@@ -224,24 +233,24 @@ fun DatePickerDialog(
             TextButton(
                 onClick = onConfirm,
                 modifier = Modifier
-                    .height(48.dp) // Minimum touch target
+                    .height(48.dp) //Setting the height of the confirm button
                     .semantics {
-                        contentDescription = "Confirm date selection"
+                        contentDescription = "Confirm date selection" //Setting the content description of the confirm button
                     }
             ) {
-                Text("OK")
+                Text("OK") //Setting the text of the confirm button
             }
         },
         dismissButton = {
             TextButton(
                 onClick = onDismissRequest,
                 modifier = Modifier
-                    .height(48.dp) // Minimum touch target
+                    .height(48.dp) //Setting the height of the dismiss button
                     .semantics {
-                        contentDescription = "Cancel date selection"
+                        contentDescription = "Cancel date selection" //Setting the content description of the dismiss button
                     }
             ) {
-                Text("Cancel")
+                Text("Cancel") //Setting the text of the dismiss button
             }
         },
         modifier = modifier

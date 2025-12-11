@@ -25,18 +25,22 @@ import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-/**
- * Screen for viewing and editing an existing task.
- * Includes input fields for title, description, due date, and completion status.
- */
+
+
+ //This is a composable ui function for the edit task screen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditTaskScreen(
+    //The taskId of the task to be edited
     taskId: String,
+    //Creates a listener for when the user presses the back button
     onNavigateBack: () -> Unit,
+    //Creates a modifier for the edit task screen
     modifier: Modifier = Modifier,
+    //Creates a viewModel for the edit task screen
     viewModel: EditTaskViewModel = koinViewModel()
 ) {
+    //Variables to store data from the viewModel
     val title by viewModel.title.collectAsState()
     val description by viewModel.description.collectAsState()
     val dueDate by viewModel.dueDate.collectAsState()
@@ -53,15 +57,19 @@ fun EditTaskScreen(
     }
 
     Scaffold(
+        //This is the topbar ui for the edit task screen
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
+                    //Setting the title text of the topbar
+                    Text(   
                         text = "Edit Task",
                         style = MaterialTheme.typography.headlineMedium
                     )
                 },
+                //The back button icon in the topbar
                 navigationIcon = {
+                    //Sets an onClick listender for the back button
                     IconButton(
                         onClick = onNavigateBack,
                         modifier = Modifier
@@ -84,7 +92,9 @@ fun EditTaskScreen(
         }
     ) { paddingValues ->
         if (task == null) {
-            // Loading state
+            //This is the loading state ui for the edit task screen
+            //It is displayed when the task is not loaded yet
+
             Box(
                 modifier = modifier
                     .fillMaxSize()
@@ -99,6 +109,8 @@ fun EditTaskScreen(
                 )
             }
         } else {
+            //This is the main content ui for the edit task screen
+            //It is displayed when the task is loaded
             Column(
                 modifier = modifier
                     .fillMaxSize()
@@ -106,7 +118,10 @@ fun EditTaskScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Completion status toggle
+                // This is the completion status toggle ui for the edit task screen
+                //It is displayed when the task is loaded
+
+                //Card ui properties to display the completion status of the task
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -128,10 +143,12 @@ fun EditTaskScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        //Task status text
                         Text(
                             text = "Task Status",
                             style = MaterialTheme.typography.titleMedium
                         )
+                        //A toggle switch to be clicked when the task is completed
                         Switch(
                             checked = isCompleted,
                             onCheckedChange = { viewModel.toggleCompletion() },
@@ -147,7 +164,8 @@ fun EditTaskScreen(
                     }
                 }
 
-                // Title input field
+                
+                //This is the input text field for the title of the task
                 OutlinedTextField(
                     value = title,
                     onValueChange = { viewModel.updateTitle(it) },
@@ -162,7 +180,7 @@ fun EditTaskScreen(
                     isError = title.isBlank() && title.isNotEmpty()
                 )
 
-                // Description input field
+               //The input text field for the description of the task
                 OutlinedTextField(
                     value = description,
                     onValueChange = { viewModel.updateDescription(it) },
@@ -177,7 +195,7 @@ fun EditTaskScreen(
                     maxLines = 8
                 )
 
-                // Due date picker
+                // The due date picker field for the task
                 val dateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
                 OutlinedTextField(
                     value = if (dueDate != null) {
@@ -195,6 +213,7 @@ fun EditTaskScreen(
                         .testTag("date_input"),
                     readOnly = true,
                     trailingIcon = {
+                        //An icon button to open the date picker dialog box when the user clicks the due date icon
                         IconButton(
                             onClick = { showDatePicker = true },
                             modifier = Modifier
@@ -211,7 +230,7 @@ fun EditTaskScreen(
                     }
                 )
 
-                // Save button
+                // The save button used to save the task to the database
                 Button(
                     onClick = {
                         coroutineScope.launch {
@@ -245,15 +264,20 @@ fun EditTaskScreen(
                 Spacer(modifier = Modifier.weight(1f))
             }
 
-            // Date picker dialog
+            // Date picker dialog box to select the due date of the task
             if (showDatePicker) {
                 val datePickerState = rememberDatePickerState(
+                    //The initial selected date of the date picker
                     initialSelectedDateMillis = dueDate ?: System.currentTimeMillis()
                 )
                 DatePickerDialog(
+                    //A listener to close the date picker dialog box when the user clicks the cancel button
                     onDismissRequest = { showDatePicker = false },
+                    //A listener to save the selected date to the database
                     onConfirm = {
+                        //A listener to save the selected date to the database
                         datePickerState.selectedDateMillis?.let {
+                            //A listener to update the due date of the task
                             viewModel.updateDueDate(it)
                         }
                         showDatePicker = false

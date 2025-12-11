@@ -12,32 +12,33 @@ import com.example.Lab2_Start.ui.screen.CreateTaskScreen
 import com.example.Lab2_Start.ui.screen.EditTaskScreen
 import com.example.Lab2_Start.ui.screen.HomeScreen
 
-/**
- * Navigation graph for the Task Manager app.
- * Handles navigation between Home, Create Task, and Edit Task screens.
- */
+
+ //This is a composable ui function for task navigation 
 @Composable
 fun TaskNavigation(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    //The NavHost function is used to navigate between different screens
     NavHost(
         navController = navController,
         startDestination = NavigationRoute.Home.route,
         modifier = modifier
     ) {
+        //The function to navigate to the home screen
         composable(NavigationRoute.Home.route) {
             HomeScreen(
                 onNavigateToCreate = {
                     navController.navigate(NavigationRoute.CreateTask.route)
                 },
                 onNavigateToEdit = { taskId ->
-                    navController.navigate(NavigationRoute.EditTask.createRoute(taskId))
+                    navController.navigate(NavigationRoute.createEditTaskRoute(taskId).route)
                 },
                 modifier = Modifier.fillMaxSize()
             )
         }
 
+        //The function to navigate to the create task screen
         composable(NavigationRoute.CreateTask.route) {
             CreateTaskScreen(
                 onNavigateBack = {
@@ -47,6 +48,7 @@ fun TaskNavigation(
             )
         }
 
+        //The function to navigate to the edit task screen
         composable(
             route = NavigationRoute.EditTask.route,
             arguments = listOf(
@@ -57,6 +59,7 @@ fun TaskNavigation(
         ) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getString("taskId") ?: ""
             EditTaskScreen(
+                //The taskId of the task to be edited 
                 taskId = taskId,
                 onNavigateBack = {
                     navController.popBackStack()
